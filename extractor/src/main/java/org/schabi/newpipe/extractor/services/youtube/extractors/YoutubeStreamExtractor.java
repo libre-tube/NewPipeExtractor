@@ -111,6 +111,7 @@ public class YoutubeStreamExtractor extends StreamExtractor {
     private static final String FORMATS = "formats";
     private static final String ADAPTIVE_FORMATS = "adaptiveFormats";
     private static final String STREAMING_DATA = "streamingData";
+    private static final String SERVER_ABR_STREAMING_URL = "serverAbrStreamingUrl";
     private static final String NEXT = "next";
     private static final String SIGNATURE_CIPHER = "signatureCipher";
     private static final String CIPHER = "cipher";
@@ -702,6 +703,30 @@ public class YoutubeStreamExtractor extends StreamExtractor {
         return getItags(ADAPTIVE_FORMATS, ItagItem.ItagType.VIDEO_ONLY,
                 getVideoStreamBuilderHelper(true), "video-only");
     }
+
+    @Override
+    public String getServerAbrStreamingUrl() {
+        assertPageFetched();
+        return java.util.stream.Stream.of(
+            // html5StreamingData,
+            androidStreamingData,
+            iosStreamingData)
+            .filter(Objects::nonNull)
+            .map(streamingData -> streamingData.getString(SERVER_ABR_STREAMING_URL))
+            .findFirst()
+            .get();
+    }
+
+    @Override
+    public String getUstreamerConfig() {
+        assertPageFetched();
+        return playerResponse
+                .getObject("playerConfig")
+                .getObject("mediaCommonConfig")
+                .getObject("mediaUstreamerRequestConfig")
+                .getString("videoPlaybackUstreamerConfig");
+    }
+
 
     @Override
     @Nonnull

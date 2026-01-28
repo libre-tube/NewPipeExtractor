@@ -593,6 +593,26 @@ public abstract class StreamExtractor extends Extractor {
         return ContentAvailability.UNKNOWN;
     }
 
+    /**
+     * The URL for server adaptive bitrate streaming.
+     *
+     * @return The stream's SABR URL.
+     * @throws ParsingException if there is an error in the extraction
+     */
+    public String getServerAbrStreamingUrl() throws ParsingException {
+        return null;
+    }
+
+    /**
+     * The ustreamerConfig for server adaptive bitrate streaming.
+     *
+     * @return The stream's ustreamerConfig.
+     * @throws ParsingException if there is an error in the extraction
+     */
+    public String getUstreamerConfig() throws ParsingException {
+        return null;
+    }
+
     public enum Privacy {
         PUBLIC,
         UNLISTED,
