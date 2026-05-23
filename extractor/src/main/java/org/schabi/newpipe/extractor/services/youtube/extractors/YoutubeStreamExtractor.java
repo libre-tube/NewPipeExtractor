@@ -1345,14 +1345,16 @@ public class YoutubeStreamExtractor extends StreamExtractor {
             final String cipherString = formatData.getString(CIPHER,
                     formatData.getString(SIGNATURE_CIPHER));
 
-            if (isNullOrEmpty(cipherString)) {
-                return null;
+            if (!isNullOrEmpty(cipherString)) {
+                final var cipher = Parser.compatParseMap(cipherString);
+                final String signature = YoutubeJavaScriptPlayerManager.deobfuscateSignature(
+                        videoId, cipher.getOrDefault("s", ""));
+                streamUrl = cipher.get("url") + "&" + cipher.get("sp") + "=" + signature;
+            } else {
+                //HACK: SABR formats share a common URL (`serverAbrStreamingUrl`) and do not have
+                // individual URLs
+                streamUrl = "sabr://" + itagItem.id;
             }
-
-            final var cipher = Parser.compatParseMap(cipherString);
-            final String signature = YoutubeJavaScriptPlayerManager.deobfuscateSignature(videoId,
-                    cipher.getOrDefault("s", ""));
-            streamUrl = cipher.get("url") + "&" + cipher.get("sp") + "=" + signature;
         }
 
         // Decode the n parameter if it is present
