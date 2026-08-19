@@ -183,11 +183,24 @@ public class StreamInfo extends Info {
             streamInfo.addError(new ExtractionException("Couldn't get video only streams", e));
         }
 
+        try {
+            streamInfo.setServerAbrStreamingUrl(extractor.getServerAbrStreamingUrl());
+        } catch (final Exception e) {
+            streamInfo.addError(e);
+        }
+        try {
+            streamInfo.setUstreamerConfig(extractor.getUstreamerConfig());
+        } catch (final Exception e) {
+            streamInfo.addError(e);
+        }
+
         // Either audio or video has to be available, otherwise we didn't get a stream (since
         // videoOnly are optional, they don't count).
         // Allow DASH and HLS manifests to be only available, as they can be the only source
         // available for livestreams
-        if (streamInfo.videoStreams.isEmpty() && streamInfo.audioStreams.isEmpty()
+        if ((isNullOrEmpty(streamInfo.serverAbrStreamingUrl)
+                && isNullOrEmpty(streamInfo.ustreamerConfig))
+                && streamInfo.videoStreams.isEmpty() && streamInfo.audioStreams.isEmpty()
                 && isNullOrEmpty(streamInfo.dashMpdUrl) && isNullOrEmpty(streamInfo.hlsUrl)) {
             throw new StreamExtractException(
                     "Could not get any stream. See error variable to get further details.");
@@ -353,16 +366,6 @@ public class StreamInfo extends Info {
         }
         try {
             streamInfo.setContentAvailability(extractor.getContentAvailability());
-        } catch (final Exception e) {
-            streamInfo.addError(e);
-        }
-        try {
-            streamInfo.setServerAbrStreamingUrl(extractor.getServerAbrStreamingUrl());
-        } catch (final Exception e) {
-            streamInfo.addError(e);
-        }
-        try {
-            streamInfo.setUstreamerConfig(extractor.getUstreamerConfig());
         } catch (final Exception e) {
             streamInfo.addError(e);
         }
