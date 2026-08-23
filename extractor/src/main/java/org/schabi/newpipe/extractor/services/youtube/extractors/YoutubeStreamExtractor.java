@@ -1019,6 +1019,7 @@ public class YoutubeStreamExtractor extends StreamExtractor {
         playerResponse = YoutubeStreamHelper.getVisionOsPlayerResponse(
                 contentCountry, localization, videoId, visionOsCpn);
 
+        checkPlayabilityStatus(playerResponse.getObject(PLAYABILITY_STATUS));
         if (isPlayerResponseNotValid(playerResponse, videoId)) {
             throw new ExtractionException("VISIONOS player response is not valid");
         }
